@@ -1,14 +1,23 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios").default;
+const bodyParser = require("body-parser");
 require("dotenv").config();
+
+
 const PORT = 5500;
 const data = require('./Movie Data/data.json')
 const app = express();
-app.use(cors());
-let apiKey =process.env.API_KEY ;
 
- 
+app.use(cors());
+app.use(bodyParser.urlencoded({extended :false}));
+app.use(bodyParser.json());
+
+// declerations 
+let apiKey =process.env.API_KEY ;
+let url = "postgres://yousef:0000@localhost:5432/movies";
+const {Client} =  require('pg')
+const client = new Client(url)  
 
 
 //routes 
@@ -27,6 +36,10 @@ app.get('/', (req, res) => {
 
 })
 
+app.post('/addMovie',addMovie)
+
+app.get('/getMovies',getMoviesData)
+
 // hander error
 app.use((req, res, next) => {
     res.status(404).send("page not found error")
@@ -41,14 +54,7 @@ app.get('/favorite',(req,res) => {
     res.send('Welcome to Favorite Page')
 })
 
-function FavMovie (title, poster_path, overview){
-    this.title=title,
-    this.poster_path=poster_path,
-    this.overview=overview
-}
-
-
-
+// functions 
 function getDataTrending(req,res){
   let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}`;
   axios.get(url)
@@ -62,19 +68,19 @@ function getDataTrending(req,res){
           movie.release_date,
           movie.poster_path,
           movie.overview
-           
-        );
           
-      });
-      res.json(movies);
-
-      
-  }
-)
+          );
+          
+        });
+        res.json(movies);
+        
+        
+      }
+      )
   .catch((error => {
-      console.log(error);
-      res.send("error in getting data from API")
-}))
+    console.log(error);
+    res.send("error in getting data from API")
+  }))
 }
 
 function getGenres(req,res){
@@ -82,20 +88,20 @@ function getGenres(req,res){
   axios.get(url)
   .then(result => {
     console.log(result.data.genres);
-      
-      // throw new Error
-      let genre = result.data.genres.map((genre) => {
+    
+    // throw new Error
+    let genre = result.data.genres.map((genre) => {
         return new Genre (
           genre.id,
           genre.name
-        )
+          )
       });
       res.json(genre);
-
       
-  }
-)
-  .catch((error => {
+      
+    }
+    )
+    .catch((error => {
       console.log(error);
       res.send(error)
 }))
@@ -103,17 +109,17 @@ function getGenres(req,res){
 
 
 function getDataSearch(req, res) {
- 
+  
   let movieName = req.query.name;
   // console.log(movieName);
- 
+  
   // https://api.themoviedb.org/3/search/movie?api_key=e081bc4fb03a9e99615491efebc747da&query=Uncharted&page=1
 
   let url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movieName}&page=1`;
   console.log(url);
   axios 
-    .get(url)
-    .then((result) => {
+  .get(url)
+  .then((result) => {
           let searchMovie= result.data.results.map((movie) => {
           return new TrendMovie(
             movie.id,
@@ -121,17 +127,17 @@ function getDataSearch(req, res) {
             movie.release_date,
             movie.poster_path,
             movie.overview
-             
+            
           );
           
-           
+          
         });
         console.log(searchMovie);
-          res.json(searchMovie);
+        res.json(searchMovie);
         
-
         
-    })
+        
+      })
     .catch((error => {
       console.log(error.error);
       res.json(error)
@@ -141,11 +147,11 @@ function getDataSearch(req, res) {
 
 function getProviders (req, res) {
   let url = `https://api.themoviedb.org/3/watch/providers/movie?api_key=${apiKey}&language=en-US`;
-
+  
   axios.get(url)
   .then(result => {
     console.log(result.data.results);
-      
+    
       // throw new Error
       let provider = result.data.results.map((provider) => {
         return new Providers (
@@ -159,13 +165,45 @@ function getProviders (req, res) {
   }
 )
   .catch((error => {
-      console.log(error);
+    console.log(error);
       res.send(error)
 }))
 }
 
+function addMovie (req, res){
+  console.log(req.body);
+  let {id, title,release_date,poster_path,overview,myrate}=req.body
+
+let sql = `INSERT INTO movie (id, title, release_date,poster_path,overview,myrate) values($1,$2,$3,$4,$5,$6) RETURNING *;`;
+let values = [id, title,release_date,poster_path,overview,myrate];
+
+
+client.query(sql,values).then((result)=>{
+  return res.status(201).json(result.rows)
+
+}).catch((error)=>{
+  console.log(error);
+})
+
+
+
+}
+
+function getMoviesData(req, res){
+  let sql = `SELECT * FROM movie;`;
+  client.query(sql).then((result)=>{
+    res.json(result.rows)
+  }).catch((error)=>{
+    console.log(error);
+  })
+}
 
 // constructors 
+function FavMovie (title, poster_path, overview){
+    this.title=title,
+    this.poster_path=poster_path,
+    this.overview=overview
+}
 function TrendMovie(id,title,release_date,poster_path,overview){
   this.id=id,
   this.title=title,
@@ -189,6 +227,8 @@ function Providers (id,name){
 
 
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`)
+client.connect().then(()=>{
+  app.listen(PORT, () => {
+    console.log(`Example app listening on port ${PORT}`)
+  })
 })

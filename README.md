@@ -6,7 +6,7 @@
 
 ![WRRC image ](./assets/Screenshot%202022-04-28%20045503.jpg)
 ![WRRC image ](./assets/API%20process%20image%20.jpg)
-
+![web request response cycle image ](./assets/clinet_server_api_db.jpg)
 
 ## Overview
 
@@ -24,8 +24,10 @@ enter to root dir and run 'npm install'
 
 ## Project Features
 <!-- What are the features included in you app -->
-- you can open your favorit cato 
+- you can open your favorit cato
 - you will get the latest movies based on your spicification
 - you can search for a movie
 - you can search for a provider names and ids
 - you can search for a genrs
+- you can add your info to the database
+- you can get the info from the database
