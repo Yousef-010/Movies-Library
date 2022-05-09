@@ -14,13 +14,18 @@ This app  will able you to check the latest movies bsed on categories
 
 ## Getting Started
 
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->.
+<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+### this project deal with : 
+- Node.js
+- Express
+- 3rd party API
+- Postgres
 
-- first step :
-you should git clonned into your local machine
-- second step :
-enter to root dir and run 'npm install'
-- third step :node server.js
+#### runnig the app 
+
+> npm intsall
+
+> npm start // on port 5500
 
 ## Project Features
 <!-- What are the features included in you app -->
@@ -29,5 +34,14 @@ enter to root dir and run 'npm install'
 - you can search for a movie
 - you can search for a provider names and ids
 - you can search for a genrs
-- you can add your info to the database
-- you can get the info from the database
+
+### Deal with the DataBase
+
+- you can add your record to the database
+- you can get the record from the database
+- you can get all the record from the database
+> CRUD Operation
+- you can add new record to the database
+- you can get spicific record from the database
+- you can update the record from the database
+- you can delelte the record from tthe database
