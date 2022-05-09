@@ -20,6 +20,10 @@ const {Client} =  require('pg')
 const client = new Client(url)  
 
 
+
+
+
+
 //routes 
 app.get('/trending', getDataTrending)
 
@@ -36,9 +40,20 @@ app.get('/', (req, res) => {
 
 })
 
+app.get('/getallMovies',getMoviesData)
+
+// CRUD operations
 app.post('/addMovie',addMovie)
 
-app.get('/getMovies',getMoviesData)
+app.get('/getSpicificMovie/:id',getSpicificMovie)
+
+app.delete('/deleteMovie/:id',deleteMovie)
+
+app.put('/updateMovie/:id',updateMovie)
+
+
+
+
 
 // hander error
 app.use((req, res, next) => {
@@ -172,10 +187,10 @@ function getProviders (req, res) {
 
 function addMovie (req, res){
   console.log(req.body);
-  let {id, title,release_date,poster_path,overview,myrate}=req.body
+  let { title,myrate}=req.body
 
-let sql = `INSERT INTO movie (id, title, release_date,poster_path,overview,myrate) values($1,$2,$3,$4,$5,$6) RETURNING *;`;
-let values = [id, title,release_date,poster_path,overview,myrate];
+let sql = `INSERT INTO movietable (title,myrate) values($1,$2) RETURNING *;`;
+let values = [ title,myrate];
 
 
 client.query(sql,values).then((result)=>{
@@ -190,13 +205,55 @@ client.query(sql,values).then((result)=>{
 }
 
 function getMoviesData(req, res){
-  let sql = `SELECT * FROM movie;`;
+  let sql = `SELECT * FROM movietable;`;
   client.query(sql).then((result)=>{
     res.json(result.rows)
   }).catch((error)=>{
     console.log(error);
   })
 }
+
+function getSpicificMovie(req, res){
+  let id = req.params.id
+   
+
+  let sql = `SELECT * FROM movietable WHERE id = ${id} ;`;
+  client.query(sql).then((result)=>{
+    res.json(result.rows)
+  }).catch((error)=>{
+    console.log(error);
+  })
+}
+
+function deleteMovie(req, res){
+  let id = req.params.id
+  let sql = `DELETE FROM movietable WHERE id = ${id} RETURNING *;`;
+
+  client.query(sql).then((result)=>{
+    res.json(result.rows[0])
+  }).catch((error)=>{
+    console.log(error);
+  })
+}
+
+function updateMovie (req, res){
+    let id = req.params.id
+    let { title,myrate}=req.body
+
+    let sql = `UPDATE movietable SET title =$1, myrate =$2 WHERE id = ${id} RETURNING *;`;
+    let values = [ title,myrate];
+
+
+client.query(sql,values).then((result)=>{
+  return res.status(201).json(result.rows)
+
+}).catch((error)=>{
+  console.log(error);
+})
+
+}
+
+
 
 // constructors 
 function FavMovie (title, poster_path, overview){
