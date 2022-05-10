@@ -14,9 +14,9 @@ app.use(bodyParser.urlencoded({extended :false}));
 app.use(bodyParser.json());
 
 // declerations 
-let apiKey =process.env.API_KEY ;
+let API_KEY =process.env.API_KEY ;
 
-let url = "postgres://yousef:0000@localhost:5432/movies";
+// let url = "postgres://yousef:0000@localhost:5432/movies";
 
 const {Client} =  require('pg')
 // const client = new Client(url)  
@@ -79,7 +79,7 @@ app.get('/favorite',(req,res) => {
 
 // functions 
 function getDataTrending(req,res){
-  let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}`;
+  let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${API_KEY}`;
   axios.get(url)
   .then(result => {
       // res.json(result.data.results);
@@ -107,7 +107,7 @@ function getDataTrending(req,res){
 }
 
 function getGenres(req,res){
-  let url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
+  let url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=en-US`;
   axios.get(url)
   .then(result => {
     console.log(result.data.genres);
@@ -138,7 +138,7 @@ function getDataSearch(req, res) {
   
   // https://api.themoviedb.org/3/search/movie?api_key=e081bc4fb03a9e99615491efebc747da&query=Uncharted&page=1
 
-  let url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movieName}&page=1`;
+  let url = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${movieName}&page=1`;
   console.log(url);
   axios 
   .get(url)
@@ -169,7 +169,7 @@ function getDataSearch(req, res) {
 }
 
 function getProviders (req, res) {
-  let url = `https://api.themoviedb.org/3/watch/providers/movie?api_key=${apiKey}&language=en-US`;
+  let url = `https://api.themoviedb.org/3/watch/providers/movie?api_key=${API_KEY}&language=en-US`;
   
   axios.get(url)
   .then(result => {
