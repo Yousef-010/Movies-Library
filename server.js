@@ -16,16 +16,18 @@ app.use(bodyParser.json());
 // declerations 
 let API_KEY =process.env.API_KEY ;
 
-// let url = "postgres://yousef:0000@localhost:5432/movies";
+let url = "postgres://yousef:0000@localhost:5432/movies";
 
 const {Client} =  require('pg')
-// const client = new Client(url)  
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-      rejectUnauthorized: false
-  }
-})
+const client = new Client(url)
+
+
+// const client = new Client({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: {
+//       rejectUnauthorized: false
+//   }
+// })
 
 
 
