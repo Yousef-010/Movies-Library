@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 
 
-const PORT = 5500;
+const PORT = process.env.PORT;
 const data = require('./Movie Data/data.json')
 const app = express();
 
@@ -15,9 +15,17 @@ app.use(bodyParser.json());
 
 // declerations 
 let apiKey =process.env.API_KEY ;
+
 let url = "postgres://yousef:0000@localhost:5432/movies";
+
 const {Client} =  require('pg')
-const client = new Client(url)  
+// const client = new Client(url)  
+const client = new Client({
+  connectionString:process.env.DATABASE_URL,
+  ssl:{
+    rejectUnauthorized:false
+  }
+})
 
 
 
