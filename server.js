@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 
 
-const PORT = process.env.PORT || 5501;
+const PORT = process.env.PORT || 3001;
 const data = require('./Movie Data/data.json')
 const app = express();
 
